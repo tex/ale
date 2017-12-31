@@ -33,7 +33,12 @@ function! ale_linters#cpp#clang#GetCommand(buffer) abort
                 return l:s
             endif
         endfor
-        echom "ALE: Please refresh your compile_commands.json!"
+        " This file is not is compile_commands.json. It is either new file or
+        " header. Try first compile command parameters... Replace '-o some/path -c
+        " path' with '-c buffer/path -fsyntax-only'...
+        let l:a = l:l[0]
+        let l:s = substitute(l:a["command"], "-o .*$", "-c ".l:b." -fsyntax-only", "")
+        return l:s
     endif
 endfunction
 
